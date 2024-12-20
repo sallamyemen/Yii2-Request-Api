@@ -9,6 +9,8 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Request;
+use app\models\RequestSearch;
 
 class SiteController extends Controller
 {
@@ -125,4 +127,52 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    public function actionSubmit()
+    {
+        $model = new Request();
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Your request has been submitted successfully.');
+            return $this->refresh();
+        }
+
+        return $this->render('submit', ['model' => $model]);
+    }
+
+    public function actionAdmin()
+    {
+        $searchModel = new RequestSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('admin', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionResolve($id)
+    {
+        $model = Request::findOne($id);
+        if (!$model) {
+            throw new NotFoundHttpException('The request does not exist.');
+        }
+
+        if (Yii::$app->request->isPost) {
+            $model->status = 'Resolved';
+            $model->comment = Yii::$app->request->post('comment');
+            if ($model->save()) {
+                Yii::$app->mailer->compose()
+                    ->setTo($model->email)
+                    ->setSubject('Your Request has been Resolved')
+                    ->setTextBody($model->comment)
+                    ->send();
+                Yii::$app->session->setFlash('success', 'The request has been resolved.');
+                return $this->redirect(['admin']);
+            }
+        }
+
+        return $this->render('resolve', ['model' => $model]);
+    }
+
+
 }

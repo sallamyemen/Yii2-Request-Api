@@ -1,5 +1,6 @@
 # phpstorm project files
 .idea
+*.iml
 
 # netbeans project files
 nbproject
@@ -9,11 +10,16 @@ nbproject
 .project
 .settings
 
+# visual studio code project files
+.vscode
+
 # windows thumbnail cache
 Thumbs.db
 
 # composer vendor dir
 /vendor
+# cubrid install dir
+/cubrid
 
 # composer itself is not needed
 composer.phar
@@ -25,9 +31,20 @@ composer.phar
 phpunit.phar
 # local phpunit config
 /phpunit.xml
+.phpunit.result.cache
 
 tests/_output/*
 tests/_support/_generated
 
 #vagrant folder
 /.vagrant
+
+# ignore dev installed apps and extensions
+/apps
+/extensions
+/packages
+
+# NPM packages
+/node_modules
+.env
+package-lock.json
