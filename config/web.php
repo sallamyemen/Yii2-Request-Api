@@ -70,6 +70,7 @@ $config = [
         ],
         */
     ],
+    'homeUrl' => ['site/submit'],
     'params' => $params,
 ];
 
